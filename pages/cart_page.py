@@ -23,11 +23,17 @@ class CartPage(BasePage):
 
     def add_product(self, product_path, qty=None):
         """Open a product page (e.g. '/computing-and-internet') and add it to the cart."""
-        self.open(product_path)
-        if qty is not None:
-            self.type(self.QTY_INPUT, str(qty))
-        self.click(self.ADD_TO_CART)
-        self.find(self.BAR_NOTIFICATION)
+        for attempt in range(2):
+            self.open(product_path)
+            try:
+                if qty is not None:
+                    self.type(self.QTY_INPUT, str(qty))
+                self.click(self.ADD_TO_CART)
+                self.find(self.BAR_NOTIFICATION)
+                return self
+            except TimeoutException:
+                if attempt == 1:
+                    raise
         return self
 
     def load(self):
