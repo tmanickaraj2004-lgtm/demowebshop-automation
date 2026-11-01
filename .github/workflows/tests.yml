@@ -1,0 +1,36 @@
+name: Selenium Tests
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        browser: [chrome, firefox]
+        module: [module1_ecommerce, module2_crossbrowser, module3_datadriven]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+      - run: pip install -r requirements.txt
+      - run: python testdata/make_excel_data.py
+      - name: Run ${{ matrix.module }} on ${{ matrix.browser }}
+        run: >
+          pytest tests/${{ matrix.module }}
+          --browser=${{ matrix.browser }} --headless
+          --html=reports/report-${{ matrix.module }}-${{ matrix.browser }}.html
+          --self-contained-html
+          --alluredir=reports/allure-${{ matrix.browser }}
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: report-${{ matrix.module }}-${{ matrix.browser }}
+          path: reports/

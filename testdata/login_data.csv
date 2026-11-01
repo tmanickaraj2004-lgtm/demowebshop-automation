@@ -1,0 +1,5 @@
+case_id,email,password,expected_result
+unknown_user_1,nobody_registered@mailtest.com,Test@1234,Login was unsuccessful
+unknown_user_2,ghost.user@mailtest.com,Pass@1234,Login was unsuccessful
+bad_format,invalid-email,Test@1234,Please enter a valid email address
+empty_email,,Test@1234,Login was unsuccessful|Please enter your email
